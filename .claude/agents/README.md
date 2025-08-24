@@ -1,6 +1,8 @@
-# Data Source Research Agents
+# Canadian Data Source Research Agents
 
-This directory contains Claude subagent instructions for systematic research and documentation of retail data SOURCES (not the data itself).
+This directory contains Claude subagent instructions for systematic research and documentation of **CANADIAN** retail data SOURCES (not the data itself).
+
+**CRITICAL**: All agents must focus exclusively on Canadian sources - Canadian government databases, Canadian operations of retail chains, Canadian industry associations, and Canadian aggregators only.
 
 ## Master Research List Integration
 
