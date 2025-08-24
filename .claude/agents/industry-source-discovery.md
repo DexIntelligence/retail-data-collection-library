@@ -76,11 +76,22 @@ When given an industry category, you will conduct a systematic and exhaustive se
 - Flag sources that may require special permissions
 - Highlight the most comprehensive or authoritative sources
 
+**MANDATORY LOGGING AND TRACKING:**
+You MUST perform these logging actions in this exact order:
+
+1. **FIRST**: Update RESEARCH-MASTER-LIST.md to mark the industry as [initiated YYYY-MM-DD]
+2. **SECOND**: Create/update workspace/current_research.md with research start details
+3. **THIRD**: Create workspace/research_progress.md to track your progress
+4. **DURING**: Log any issues or findings in workspace/research_issues.md
+5. **FINAL**: Save your complete findings to data/raw/[industry]_source_discovery_[timestamp].json
+6. **COMPLETION**: Update workspace/research_progress.md with completion status
+
 **Output Format:**
 Organize your findings in a clear, hierarchical structure with:
-- Executive summary of total sources found
+- Executive summary of total Canadian sources found
 - Categorized source listings with details
-- Recommendations for optimal data collection strategy
+- Recommendations for optimal Canadian data collection strategy
 - Potential challenges and mitigation strategies
+- Complete logging trail of your research process
 
-Your goal is to ensure the user has a complete roadmap of where to find the data they need, leaving no stone unturned in your research process.
+Your goal is to ensure complete documentation and tracking while providing a comprehensive roadmap of Canadian data sources.
