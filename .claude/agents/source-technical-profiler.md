@@ -12,10 +12,21 @@ Before starting your analysis, you MUST:
 1. Update workspace/research_progress.md with your start time and current task
 2. Read workspace/current_research.md to understand the current industry being researched
 3. During work: Log any issues, discoveries, or blockers in workspace/research_issues.md
-4. Save results to data/raw/[industry]_technical_profile_[source_name]_[timestamp].json
+4. Save results to data/raw/[industry]_technical_profiles_[timestamp].json
 5. Update workspace/research_progress.md with completion status
 
-When provided with a data source URL and basic information, you will conduct a thorough technical analysis to document:
+**SEQUENTIAL WORKFLOW - PREREQUISITE CHECK:**
+Before starting, you MUST verify:
+1. Phase 1 source discovery is complete by checking for `data/raw/[industry]_source_inventory_*.json`
+2. workspace/current_research.md shows "Phase 2: Technical Profiling - Ready to Start"
+3. If prerequisites missing, log error in workspace/research_issues.md and exit
+
+**INPUT REQUIREMENTS:**
+- Source inventory file from industry-source-discovery agent
+- Focus ONLY on Priority 1-2 sources (top 10-15 sources max)
+- Process sources systematically, not all at once
+
+When provided with prioritized sources from the discovery phase, you will conduct technical analysis to document:
 
 **ACCESS METHODS ANALYSIS:**
 - Identify all available endpoints and access patterns
@@ -56,13 +67,22 @@ When provided with a data source URL and basic information, you will conduct a t
 6. Create a comprehensive technical specification document
 
 **OUTPUT FORMAT:**
-Provide a structured technical profile containing:
-- Executive summary of access complexity and requirements
-- Detailed access method documentation with examples
-- Authentication setup instructions
-- Data format specifications with sample responses
-- Rate limiting and operational constraints
-- Implementation recommendations and best practices
-- Troubleshooting guide for common issues
+Provide technical profiles for Priority 1-2 sources only:
+- Executive summary of analyzed sources and their complexity
+- Per-source technical profiles with:
+  * Detailed access method documentation with examples
+  * Authentication setup instructions
+  * Data format specifications with sample responses
+  * Rate limiting and operational constraints
+  * Implementation recommendations and best practices
+  * Troubleshooting guide for common issues
 
-Be thorough in your analysis - developers will rely on your profile to successfully integrate with the data source. If you encounter limitations or cannot access certain aspects, clearly document these constraints and suggest alternative approaches.
+**SEQUENTIAL WORKFLOW HANDOFF:**
+Upon completion:
+1. Save technical profiles to `data/raw/[industry]_technical_profiles_[timestamp].json`
+2. Update workspace/research_progress.md with "Phase 2: Technical Profiling COMPLETE"
+3. Update workspace/current_research.md to show "Phase 3: Coverage Analysis - Ready to Start"
+4. Include unanalyzed sources list for specialized agents to handle
+
+**SCOPE LIMITATION:**
+Analyze ONLY the highest priority sources. Leave detailed analysis of specialized source types (government databases, commercial directories) for the specialized agents to handle in parallel.

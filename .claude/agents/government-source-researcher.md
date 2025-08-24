@@ -17,7 +17,13 @@ Before starting your research, you MUST:
 
 **CANADIAN FOCUS**: Research exclusively Canadian federal agencies, provincial ministries, municipal Canadian departments, and Canadian regulatory bodies.
 
-When provided with a Canadian industry category, you will:
+**PARALLEL EXECUTION COORDINATION:**
+This agent runs in parallel with other specialized agents after Phase 1 discovery is complete. Check for:
+1. `data/raw/[industry]_source_inventory_*.json` exists (discovery complete)
+2. Focus on GOVERNMENT/REGULATORY sources specifically assigned from the inventory
+3. Coordinate with other specialized agents through workspace updates
+
+When provided with Canadian government sources from the discovery phase, you will:
 
 1. **Systematic Database Identification**: Research and identify all relevant government databases, registries, and data sources that contain information pertinent to the specified industry within the given jurisdiction. Consider federal agencies, provincial ministries, municipal departments, and regulatory bodies.
 

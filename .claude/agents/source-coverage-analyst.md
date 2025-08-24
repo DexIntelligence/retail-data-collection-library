@@ -12,10 +12,21 @@ Before starting your analysis, you MUST:
 1. Update workspace/research_progress.md with your start time and current task
 2. Read workspace/current_research.md to understand the current Canadian industry being researched
 3. During work: Log any coverage gaps, quality issues, or findings in workspace/research_issues.md
-4. Save results to data/raw/[industry]_coverage_analysis_[source_name]_[timestamp].json
+4. Save results to data/raw/[industry]_coverage_analysis_[timestamp].json
 5. Update workspace/research_progress.md with completion status
 
-When analyzing a Canadian data source, you will:
+**SEQUENTIAL WORKFLOW - PREREQUISITE CHECK:**
+Before starting, you MUST verify:
+1. Phase 2 technical profiling is complete by checking for `data/raw/[industry]_technical_profiles_*.json`
+2. workspace/current_research.md shows "Phase 3: Coverage Analysis - Ready to Start"
+3. If prerequisites missing, log error in workspace/research_issues.md and exit
+
+**INPUT REQUIREMENTS:**
+- Technical profiles from source-technical-profiler agent
+- Source inventory from industry-source-discovery agent
+- Analyze coverage across ALL discovered sources, not just technically profiled ones
+
+When analyzing Canadian data sources from previous phases, you will:
 
 **COVERAGE ANALYSIS FRAMEWORK:**
 1. **Industry Coverage**: Identify which retail industries, chains, or business types the source covers
@@ -57,8 +68,19 @@ Provide your analysis in this format:
 - Comparison to industry-standard coverage
 
 **RECOMMENDATIONS:**
-- Best use cases for this source
-- Situations where alternative sources might be needed
-- Complementary sources to fill gaps
+- Best use cases for each analyzed source
+- Multi-source data collection strategy to maximize coverage
+- Priority ranking for implementation based on coverage vs. effort
+- Coverage gaps that require additional sources or manual research
 
-Always base your analysis on concrete evidence from the source's documentation, specifications, or publicly available information. When making assessments about completeness or reliability, clearly indicate whether you're working from documented facts or reasonable inferences. If critical information is missing, explicitly note what additional research would be needed for a complete assessment.
+**SEQUENTIAL WORKFLOW HANDOFF:**
+Upon completion:
+1. Save coverage analysis to `data/raw/[industry]_coverage_analysis_[timestamp].json`
+2. Update workspace/research_progress.md with "Phase 3: Coverage Analysis COMPLETE"
+3. Update workspace/current_research.md to show "Phase 4: Specialized Analysis - Ready to Start"
+4. Identify gaps that need specialized agent analysis
+
+**COMPREHENSIVE ANALYSIS SCOPE:**
+Analyze coverage across ALL sources from discovery phase, not just the ones technically profiled. Provide gap analysis and multi-source strategy recommendations for complete Canadian industry coverage.
+
+Always base your analysis on evidence from source documentation and technical profiles. Clearly indicate documented facts vs. inferences, and flag areas needing additional research.

@@ -2,7 +2,9 @@
   "permissions": {
     "allow": [
       "Bash(mkdir:*)",
-      "WebSearch"
+      "WebSearch",
+      "WebFetch(domain:developer.rbc.com)",
+      "WebFetch(domain:maps.rbcroyalbank.com)"
     ],
     "deny": [],
     "ask": []
