@@ -22,10 +22,11 @@ The master list is the **single source of truth** for research priorities and pr
 **Research Focus**: WHERE to find store location data, not the data itself
 
 ### `source-technical-profiler`
-**Purpose**: Deep technical analysis of how to ACCESS each discovered data source
-**Input**: Data source URL and basic information
-**Output**: Technical profile documenting access methods, authentication, data formats, and limitations
-**Research Focus**: HOW to access the source, API documentation, query parameters, rate limits
+**Purpose**: Comprehensive technical analysis of how to ACCESS ALL discovered data sources
+**Input**: Complete source inventory from discovery agent
+**Output**: Technical profiles for ALL sources documenting access methods, authentication, data formats, and limitations
+**Research Focus**: HOW to access EVERY viable source for complete market coverage capability
+**Scope**: ALL sources (brands, aggregators, government, commercial) - not just high-priority ones
 
 ### `source-coverage-analyst`
 **Purpose**: Analyze what data is AVAILABLE from each source
@@ -63,12 +64,14 @@ The master list is the **single source of truth** for research priorities and pr
 
 ### Source Research Workflow
 1. **Check Master List** → Review `RESEARCH-MASTER-LIST.md` for next industry
-2. **Industry Source Discovery** → Comprehensive inventory of all available sources
+2. **Industry Source Discovery** → Comprehensive inventory of ALL available sources
 3. **Source Type Classification** → Categorize sources (brand, aggregator, government, commercial)
-4. **Technical Profiling** → Document access methods for each source
-5. **Coverage Analysis** → Assess data availability and gaps
-6. **Source Documentation** → Create comprehensive source profiles for library
+4. **Complete Technical Profiling** → Document access methods for ALL discovered sources (not just high-priority)
+5. **Comprehensive Coverage Analysis** → Assess data availability and gaps across complete source landscape
+6. **Source Documentation** → Create comprehensive source profiles enabling full market coverage
 7. **Update Master List** → Mark industry as completed with date
+
+**CRITICAL**: Each phase analyzes ALL sources for comprehensive market coverage, not just the easiest or highest-priority sources. The goal is complete Canadian industry coverage capability.
 
 ### Research Output Structure
 Each source gets documented with:

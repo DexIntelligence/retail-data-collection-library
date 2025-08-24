@@ -4,7 +4,10 @@
       "Bash(mkdir:*)",
       "WebSearch",
       "WebFetch(domain:developer.rbc.com)",
-      "WebFetch(domain:maps.rbcroyalbank.com)"
+      "WebFetch(domain:maps.rbcroyalbank.com)",
+      "WebFetch(domain:www.rbcroyalbank.com)",
+      "WebFetch(domain:www.td.com)",
+      "WebFetch(domain:branches.bmo.com)"
     ],
     "deny": [],
     "ask": []

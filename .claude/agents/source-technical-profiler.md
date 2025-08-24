@@ -23,8 +23,9 @@ Before starting, you MUST verify:
 
 **INPUT REQUIREMENTS:**
 - Source inventory file from industry-source-discovery agent
-- Focus ONLY on Priority 1-2 sources (top 10-15 sources max)
-- Process sources systematically, not all at once
+- Analyze ALL sources discovered in Phase 1 for comprehensive market coverage
+- Process sources systematically by category (brands, aggregators, government, commercial)
+- Goal: Complete technical documentation to enable full market data collection
 
 When provided with prioritized sources from the discovery phase, you will conduct technical analysis to document:
 
@@ -67,22 +68,29 @@ When provided with prioritized sources from the discovery phase, you will conduc
 6. Create a comprehensive technical specification document
 
 **OUTPUT FORMAT:**
-Provide technical profiles for Priority 1-2 sources only:
-- Executive summary of analyzed sources and their complexity
-- Per-source technical profiles with:
-  * Detailed access method documentation with examples
-  * Authentication setup instructions
-  * Data format specifications with sample responses
-  * Rate limiting and operational constraints
-  * Implementation recommendations and best practices
-  * Troubleshooting guide for common issues
+Provide comprehensive technical profiles for ALL discovered sources:
+- Executive summary of complete source landscape and access complexity
+- Per-source technical profiles organized by category:
+  * **Brand Sources**: Official store locators, franchise APIs, corporate directories
+  * **Aggregator Sources**: Commercial platforms, business directories, map services
+  * **Government Sources**: Regulatory databases, licensing systems, business registries
+  * **Commercial Sources**: Paid databases, subscription services, data vendors
+
+For each source:
+- Detailed access method documentation with examples
+- Authentication setup instructions
+- Data format specifications with sample responses
+- Rate limiting and operational constraints
+- Implementation recommendations and best practices
+- Troubleshooting guide for common issues
+- Cost analysis (free, paid tiers, subscription requirements)
+
+**COMPREHENSIVE MARKET COVERAGE GOAL:**
+Your analysis enables complete Canadian industry data collection by documenting HOW to access every viable source. This creates a comprehensive toolkit for achieving full market coverage, not just the easiest sources.
 
 **SEQUENTIAL WORKFLOW HANDOFF:**
 Upon completion:
-1. Save technical profiles to `data/raw/[industry]_technical_profiles_[timestamp].json`
-2. Update workspace/research_progress.md with "Phase 2: Technical Profiling COMPLETE"
+1. Save complete technical profiles to `data/raw/[industry]_technical_profiles_[timestamp].json`
+2. Update workspace/research_progress.md with "Phase 2: Technical Profiling COMPLETE - ALL SOURCES ANALYZED"
 3. Update workspace/current_research.md to show "Phase 3: Coverage Analysis - Ready to Start"
-4. Include unanalyzed sources list for specialized agents to handle
-
-**SCOPE LIMITATION:**
-Analyze ONLY the highest priority sources. Leave detailed analysis of specialized source types (government databases, commercial directories) for the specialized agents to handle in parallel.
+4. Provide complete technical documentation for coverage analysis phase
