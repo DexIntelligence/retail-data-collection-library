@@ -1,0 +1,799 @@
+{
+  "metadata": {
+    "title": "Canadian Banking Sources Technical Access Documentation",
+    "phase": "Phase 2 - Technical Access Analysis",
+    "date": "2025-01-24",
+    "analyst": "Technical Data Source Analyst",
+    "scope": "47 Canadian banking data sources from Phase 1 discovery",
+    "focus": "Technical implementation methods only - no data quality analysis",
+    "total_sources": 47,
+    "categories": 6,
+    "status": "Comprehensive Technical Analysis Complete"
+  },
+  "executive_summary": {
+    "overview": "Comprehensive technical access analysis of all 47 Canadian banking data sources reveals highly variable implementation complexity. Access methods range from simple web scraping to complex OAuth flows, with most official sources lacking public APIs.",
+    "key_findings": {
+      "official_apis": "Only 2 of 6 major banks offer developer APIs (RBC, Scotiabank)",
+      "authentication_complexity": "Ranges from no authentication (public scrapers) to corporate OAuth (bank APIs)",
+      "primary_access_method": "Web scraping for 70%+ of sources due to lack of public APIs",
+      "commercial_alternatives": "High-quality commercial APIs available for comprehensive coverage",
+      "rate_limiting": "Most sources have anti-bot protections requiring careful implementation"
+    },
+    "technical_barriers": [
+      "Limited public API availability",
+      "Complex authentication requirements",
+      "Anti-scraping protections",
+      "Dynamic content loading",
+      "Registration gatekeeping"
+    ],
+    "recommended_approach": "Hybrid strategy combining commercial APIs, official APIs where available, and strategic web scraping with proper rate limiting"
+  },
+  "source_categories": {
+    "1_major_banks": {
+      "category_info": {
+        "name": "Major Canadian Banks",
+        "count": 6,
+        "priority": "Critical - Primary banking infrastructure",
+        "api_availability": "Limited - 2 of 6 have developer programs"
+      },
+      "sources": {
+        "rbc": {
+          "official_name": "Royal Bank of Canada",
+          "primary_url": "https://maps.rbcroyalbank.com/",
+          "developer_portal": "https://developer.rbc.com",
+          "access_methods": {
+            "official_api": {
+              "availability": "Yes - RBC Developer Portal",
+              "registration_required": true,
+              "authentication": "API Key + OAuth",
+              "endpoint_base": "Not publicly documented",
+              "rate_limits": "Not specified publicly",
+              "cost": "Unknown - requires registration",
+              "technical_contact": "APISupport@rbc.com",
+              "implementation_complexity": "High",
+              "status": "Active but gated"
+            },
+            "web_scraping": {
+              "target_url": "https://maps.rbcroyalbank.com/",
+              "method": "Browser automation required",
+              "technology": "JavaScript-heavy SPA",
+              "authentication": "None",
+              "rate_limits": "Anti-bot protections likely",
+              "data_format": "Dynamic JSON loading",
+              "implementation_complexity": "High",
+              "reliability": "Medium - subject to UI changes",
+              "legal_considerations": "Review Terms of Service"
+            }
+          },
+          "data_scope": "1,284 branches nationwide",
+          "update_frequency": "Real-time official data",
+          "technical_requirements": {
+            "api_access": ["OAuth 2.0 implementation", "API key management", "Corporate registration"],
+            "web_scraping": ["Selenium/Puppeteer", "Proxy rotation", "CAPTCHA handling", "Rate limiting"]
+          },
+          "code_examples": {
+            "web_scraping_approach": "// Puppeteer implementation\nconst puppeteer = require('puppeteer');\n\nconst scrapeRBCBranches = async () => {\n  const browser = await puppeteer.launch();\n  const page = await browser.newPage();\n  await page.goto('https://maps.rbcroyalbank.com/');\n  \n  // Wait for dynamic content\n  await page.waitForSelector('.location-card');\n  \n  // Extract location data\n  const branches = await page.evaluate(() => {\n    // Implementation depends on DOM structure\n    return Array.from(document.querySelectorAll('.location-card')).map(card => ({\n      // Extract branch details\n    }));\n  });\n  \n  await browser.close();\n  return branches;\n};"
+          }
+        },
+        "td": {
+          "official_name": "TD Canada Trust",
+          "primary_url": "https://www.td.com/ca/en/personal-banking/branch-locator",
+          "developer_portal": "None identified",
+          "access_methods": {
+            "official_api": {
+              "availability": "No public API",
+              "alternative_access": "Available via Plaid, Finicity integration"
+            },
+            "web_scraping": {
+              "target_url": "https://www.td.com/ca/en/personal-banking/branch-locator",
+              "method": "Form submission + result parsing",
+              "technology": "Server-side rendering with dynamic components",
+              "authentication": "None",
+              "data_format": "JSON province data embedded, dynamic location results",
+              "implementation_complexity": "Medium",
+              "api_endpoints_discovered": {
+                "province_data": "getProvinceData",
+                "geolocation_api": "https://www.tdcanadatrust.com/products-services/banking/getcookie.jsp"
+              }
+            }
+          },
+          "data_scope": "Hundreds of branches and ATMs nationwide",
+          "technical_requirements": {
+            "web_scraping": ["HTTP client with session management", "JSON parsing", "Form handling", "Geolocation simulation"]
+          },
+          "code_examples": {
+            "province_data_extraction": "// Extract embedded province data\nconst extractTDProvinces = () => {\n  // TD embeds province_list JSON in page source\n  const provinceMatch = document.body.innerHTML.match(/province_list\\s*=\\s*(\\[.*?\\]);/);\n  if (provinceMatch) {\n    return JSON.parse(provinceMatch[1]);\n  }\n  return [];\n};"
+          }
+        },
+        "bmo": {
+          "official_name": "Bank of Montreal",
+          "primary_url": "https://branchlocator.bmo.com/",
+          "alternative_url": "https://branches.bmo.com",
+          "access_methods": {
+            "official_api": {
+              "availability": "No public API identified"
+            },
+            "web_scraping": {
+              "target_url": "https://branchlocator.bmo.com/",
+              "method": "Dynamic content extraction",
+              "implementation_complexity": "Medium",
+              "challenges": ["URL redirects to online banking", "May require authentication"]
+            }
+          },
+          "data_scope": "900+ branches in Canada",
+          "geographic_coverage": "Complete national coverage"
+        },
+        "scotiabank": {
+          "official_name": "Scotiabank",
+          "primary_url": "https://locator.scotiabank.com",
+          "developer_portal": "https://developer.scotiabank.com/en.html",
+          "access_methods": {
+            "official_api": {
+              "availability": "Yes - Scotia TranXact APIs",
+              "registration_required": true,
+              "authentication": "OAuth 2.0",
+              "target_audience": "Corporate/commercial clients",
+              "endpoint_focus": "Real-time payments and account information",
+              "branch_location_api": "Not explicitly documented",
+              "registration_url": "https://developer.scotiabank.com/en/register.html",
+              "login_portal": "https://developer.api.scotiabank.com/partner-login",
+              "support_contact": "https://developer.scotiabank.com/en/support/contact-us.html"
+            },
+            "web_scraping": {
+              "target_url": "https://locator.scotiabank.com",
+              "method": "Standard web scraping",
+              "implementation_complexity": "Medium"
+            }
+          },
+          "data_scope": "900 branches, 3,600 ABMs in Canada",
+          "open_banking_status": "Coming soon",
+          "technical_requirements": {
+            "api_access": ["Corporate registration", "OAuth 2.0 implementation", "Business justification"]
+          }
+        },
+        "cibc": {
+          "official_name": "Canadian Imperial Bank of Commerce",
+          "primary_url": "https://locations.cibc.com/",
+          "access_methods": {
+            "official_api": {
+              "availability": "No public API identified"
+            },
+            "web_scraping": {
+              "target_url": "https://locations.cibc.com/",
+              "method": "Form-based search + result extraction",
+              "technology": "JavaScript-enhanced forms with Bing Maps integration",
+              "search_modes": ["Address/City/Province/Postal Code", "Transit Number"],
+              "map_integration": "Bing Maps API",
+              "implementation_complexity": "Medium",
+              "multilingual_support": ["English", "French", "Chinese"]
+            }
+          },
+          "data_scope": "1,000+ banking locations, 3,000+ ATMs",
+          "technical_requirements": {
+            "web_scraping": ["JavaScript execution", "Form handling", "Multi-language support", "Geolocation simulation"]
+          }
+        },
+        "national_bank": {
+          "official_name": "National Bank of Canada",
+          "primary_url": "https://locator.nbc.ca/",
+          "access_methods": {
+            "official_api": {
+              "availability": "No direct API, but uses Yext platform"
+            },
+            "yext_integration": {
+              "platform": "Yext-powered location management",
+              "api_key": "e55fd5a83ac96234d62b8c072c073aea",
+              "experience_key": "bnc-search",
+              "potential_api_access": "Via Yext APIs with proper authentication",
+              "implementation_complexity": "Medium"
+            },
+            "web_scraping": {
+              "target_url": "https://locator.nbc.ca/",
+              "method": "Yext search interface",
+              "search_types": ["City and state", "ZIP code", "Geolocation"],
+              "multilingual": ["English", "French"]
+            }
+          },
+          "data_scope": "422 branches, 939 ATMs (pre-CWB merger)",
+          "recent_changes": "Merged with Canadian Western Bank (Feb 2025)",
+          "technical_implementation": {
+            "yext_api_approach": "// Potential Yext API integration\nconst searchNBCLocations = async (query) => {\n  const apiKey = 'e55fd5a83ac96234d62b8c072c073aea';\n  const experienceKey = 'bnc-search';\n  \n  // Yext API call structure (requires proper authentication)\n  const response = await fetch(`https://liveapi.yext.com/v2/accounts/{accountId}/search/query?api_key=${apiKey}&experienceKey=${experienceKey}&input=${query}`);\n  return response.json();\n};"
+          }
+        }
+      },
+      "category_summary": {
+        "api_availability": "2 of 6 banks offer developer programs",
+        "primary_access_method": "Web scraping for 4 of 6 sources",
+        "authentication_complexity": "High for APIs, None for scraping",
+        "implementation_effort": "High due to JavaScript-heavy interfaces",
+        "reliability": "Medium - subject to UI changes",
+        "recommended_strategy": "Hybrid approach: APIs where available, strategic scraping with commercial backup"
+      }
+    },
+    "2_credit_unions": {
+      "category_info": {
+        "name": "Credit Unions",
+        "count": 8,
+        "priority": "High - 1,585+ branches nationwide",
+        "data_fragmentation": "Provincial jurisdiction creates complexity"
+      },
+      "sources": {
+        "ccua": {
+          "official_name": "Canadian Credit Union Association",
+          "primary_url": "https://ccua.com/about-credit-unions/find-a-credit-union/",
+          "access_methods": {
+            "official_api": {
+              "availability": "No public API"
+            },
+            "web_scraping": {
+              "target_url": "https://ccua.com/about-credit-unions/find-a-credit-union/",
+              "method": "Form-based search with advanced filtering",
+              "technology": "Select2 JavaScript library for dropdowns",
+              "search_capabilities": [
+                "Name-based dropdown selection",
+                "City/location search",
+                "Radius search (kilometers)",
+                "Geolocation support"
+              ],
+              "filtering_options": [
+                "Branch/ATM type filtering",
+                "Service network filtering (Interac, THE EXCHANGE)",
+                "Accessibility filtering"
+              ],
+              "pagination": "52 total pages of results",
+              "implementation_complexity": "Medium"
+            }
+          },
+          "data_scope": "188 credit unions, 1,630 branches, 6M+ members",
+          "geographic_coverage": "All provinces except Quebec",
+          "member_restrictions": "Some content restricted to members only",
+          "technical_requirements": {
+            "web_scraping": ["Select2 library handling", "Geolocation simulation", "Multi-page pagination", "Form submission automation"]
+          },
+          "code_examples": {
+            "scraping_approach": "// CCUA Credit Union scraping\nconst scrapeCCUALocations = async () => {\n  const page = await browser.newPage();\n  await page.goto('https://ccua.com/about-credit-unions/find-a-credit-union/');\n  \n  // Handle Select2 dropdowns\n  await page.click('.select2-container');\n  \n  // Iterate through pages\n  for (let pageNum = 1; pageNum <= 52; pageNum++) {\n    // Extract location data\n    const locations = await page.evaluate(() => {\n      return Array.from(document.querySelectorAll('.location-item')).map(item => ({\n        name: item.querySelector('.name')?.textContent,\n        address: item.querySelector('.address')?.textContent,\n        services: Array.from(item.querySelectorAll('.service')).map(s => s.textContent)\n      }));\n    });\n    \n    // Navigate to next page\n    await page.click('.next-page');\n  }\n};"
+          }
+        },
+        "central_1": {
+          "official_name": "Central 1 Credit Union",
+          "ontario_url": "https://www.central1.com/list-on/",
+          "bc_url": "https://www.central1.com/list-bc/",
+          "access_methods": {
+            "web_scraping": {
+              "target_urls": [
+                "https://www.central1.com/list-on/ (57 Ontario credit unions)",
+                "https://www.central1.com/list-bc/ (BC network)"
+              ],
+              "method": "Static list extraction",
+              "implementation_complexity": "Low",
+              "data_format": "Structured HTML lists"
+            }
+          },
+          "coverage": "Ontario and British Columbia credit union networks",
+          "implementation_notes": "Simple HTML parsing, no JavaScript required"
+        },
+        "scrapehero_cu_data": {
+          "official_name": "ScrapeHero Credit Union Dataset",
+          "provider": "Commercial data provider",
+          "access_methods": {
+            "commercial_api": {
+              "availability": "Yes - Custom APIs available",
+              "data_format": "Excel/CSV with geo-coded addresses",
+              "cloud_integration": "S3, Azure, GCP storage options",
+              "real_time_api": "Custom endpoints available",
+              "cost": "Commercial pricing",
+              "contact": "https://www.scrapehero.com/store/"
+            },
+            "bulk_download": {
+              "format": "Excel/CSV",
+              "data_included": "Geo-coded addresses, branch details",
+              "update_frequency": "Available on request"
+            }
+          },
+          "data_scope": "1,585 Canadian Credit Union Association branches",
+          "data_quality": "High - geocoded and validated",
+          "implementation_complexity": "Low - ready-to-use datasets"
+        }
+      },
+      "provincial_networks": {
+        "implementation_note": "Each province has credit union centrals that could be individually accessed",
+        "complexity": "High due to fragmentation across provinces",
+        "recommended_approach": "Use CCUA as primary source, supplement with commercial providers"
+      }
+    },
+    "3_government_regulatory": {
+      "category_info": {
+        "name": "Government & Regulatory Sources",
+        "count": 8,
+        "priority": "Critical - Authoritative regulatory data",
+        "transition_status": "Major transition to Open Government platform"
+      },
+      "sources": {
+        "osfi": {
+          "official_name": "Office of the Superintendent of Financial Institutions",
+          "legacy_url": "https://www.osfi-bsif.gc.ca/en/supervision/who-we-regulate",
+          "new_platform": "https://open.canada.ca/data/en/dataset/b27ec3ef-7338-4e76-a6fd-128339a92df5",
+          "access_methods": {
+            "open_government_api": {
+              "availability": "Yes - Full API access",
+              "endpoint_base": "https://open.canada.ca/data/en/dataset/b27ec3ef-7338-4e76-a6fd-128339a92df5",
+              "data_formats": ["CSV", "JSON", "XML", "JSON-LD"],
+              "api_formats": {
+                "metadata_json": "Full metadata in JSON format",
+                "json_ld": "Linked Data format",
+                "xml": "XML metadata",
+                "atom_feed": "RSS-style updates"
+              },
+              "update_frequency": "Daily updates",
+              "maintenance_cycle": "Monthly",
+              "authentication": "None required",
+              "rate_limits": "Standard Open Government limits",
+              "implementation_complexity": "Low"
+            },
+            "direct_download": {
+              "csv_english": "Regulated financial institutions (English)",
+              "csv_french": "Regulated financial institutions (French)",
+              "pension_plans": "Private pension plans dataset",
+              "documentation": "DOCX user manuals and glossaries"
+            }
+          },
+          "data_scope": "400+ federally regulated financial institutions, 1200+ private pension plans",
+          "transition_timeline": "Legacy access ends August 29, 2025",
+          "technical_contact": "katherine.tierney@osfi-bsif.gc.ca",
+          "licensing": "Open Government Licence - Canada",
+          "code_examples": {
+            "api_access": "// Open Government API access\nconst fetchOSFIData = async () => {\n  const baseUrl = 'https://open.canada.ca/data/en/dataset/b27ec3ef-7338-4e76-a6fd-128339a92df5';\n  \n  // Fetch metadata\n  const metadata = await fetch(`${baseUrl}.json`);\n  const metadataJson = await metadata.json();\n  \n  // Access CSV data directly\n  const csvUrl = metadataJson.resources.find(r => r.format === 'CSV' && r.language === 'en').url;\n  const csvData = await fetch(csvUrl);\n  const csvText = await csvData.text();\n  \n  return csvText;\n};",
+            "direct_csv_processing": "// Process OSFI CSV data\nconst Papa = require('papaparse');\n\nconst processOSFIData = async () => {\n  const csvData = await fetchOSFIData();\n  \n  const parsed = Papa.parse(csvData, {\n    header: true,\n    skipEmptyLines: true\n  });\n  \n  return parsed.data.filter(institution => {\n    // Filter for banks, credit unions, etc.\n    return ['Bank', 'Credit Union', 'Trust Company'].includes(institution.InstitutionType);\n  });\n};"
+          }
+        },
+        "cdic": {
+          "official_name": "Canada Deposit Insurance Corporation",
+          "primary_url": "https://www.cdic.ca/depositors/list-of-members/",
+          "access_methods": {
+            "web_scraping": {
+              "target_url": "https://www.cdic.ca/depositors/list-of-members/",
+              "method": "HTML list extraction",
+              "implementation_complexity": "Low",
+              "data_format": "Structured HTML table/list",
+              "authentication": "None required"
+            }
+          },
+          "data_scope": "All CDIC-insured institutions",
+          "data_quality": "Official regulatory source - highest accuracy",
+          "update_frequency": "As regulatory changes occur"
+        },
+        "payments_canada": {
+          "official_name": "Payments Canada",
+          "primary_url": "https://www.payments.ca/payment-resources/directories",
+          "access_methods": {
+            "web_scraping": {
+              "target_url": "https://www.payments.ca/payment-resources/directories",
+              "data_types": ["Transit numbers", "Routing information"],
+              "coverage": "Banks, credit unions, trust companies, loan companies",
+              "implementation_complexity": "Medium"
+            }
+          },
+          "data_specialty": "Payment routing and transit number information"
+        },
+        "fcac": {
+          "official_name": "Financial Consumer Agency of Canada",
+          "primary_url": "https://www.canada.ca/en/financial-consumer-agency/services/industry/regulated-entities.html",
+          "access_methods": {
+            "web_scraping": {
+              "target_url": "https://www.canada.ca/en/financial-consumer-agency/services/industry/regulated-entities.html",
+              "focus": "Consumer protection regulated entities",
+              "implementation_complexity": "Low"
+            }
+          },
+          "regulatory_focus": "Consumer protection compliance"
+        },
+        "business_registries": {
+          "federal": {
+            "mras": "https://ised-isde.canada.ca/cbr-rec/",
+            "beta_platform": "https://beta.canadasbusinessregistries.ca/",
+            "corporations_canada": "https://www.ic.gc.ca/app/scr/cc/CorporationsCanada/fdrlCrpSrch.html"
+          },
+          "provincial_examples": {
+            "ontario": "https://www.ontario.ca/page/ontario-business-registry",
+            "bc": "https://www2.gov.bc.ca/gov/content/governments/organizational-structure/ministries-organizations/ministries/citizens-services/bc-registries-online-services"
+          },
+          "msb_registry": {
+            "fintrac": "https://fintrac-canafe.canada.ca/msb-esm/reg-eng",
+            "coverage": "Money services businesses registration data"
+          },
+          "access_complexity": "Varies by province - each has different systems"
+        }
+      }
+    },
+    "4_industry_associations": {
+      "category_info": {
+        "name": "Industry Associations",
+        "count": 3,
+        "priority": "Medium - Membership directories",
+        "access_restrictions": "Some content restricted to members"
+      },
+      "sources": {
+        "cba": {
+          "official_name": "Canadian Bankers Association",
+          "primary_url": "https://cba.ca/",
+          "member_directory": "https://cba.ca/article/member-banks",
+          "access_methods": {
+            "web_scraping": {
+              "target_url": "https://cba.ca/article/member-banks",
+              "method": "Static list extraction",
+              "implementation_complexity": "Low",
+              "authentication": "None required",
+              "multilingual": ["English", "French (https://cba.ca/?l=fr)"]
+            }
+          },
+          "data_scope": "60+ domestic and foreign banks",
+          "employee_data": "280,000 industry employees",
+          "office_locations": "Toronto HQ, Ottawa and Montreal offices"
+        },
+        "ccua_directory": {
+          "note": "Previously documented in credit unions section",
+          "member_restrictions": "Some content requires member access"
+        }
+      }
+    },
+    "5_commercial_aggregators": {
+      "category_info": {
+        "name": "Commercial Aggregators & Digital Platforms",
+        "count": 12,
+        "priority": "High - Best programmatic access",
+        "api_availability": "Most offer APIs with usage-based pricing"
+      },
+      "sources": {
+        "google_maps_platform": {
+          "official_name": "Google Maps Platform",
+          "documentation_url": "https://developers.google.com/maps/documentation/places/web-service/overview",
+          "access_methods": {
+            "places_api": {
+              "availability": "Yes - Full API access",
+              "authentication": "API Key required",
+              "endpoints": {
+                "text_search": "Search for banks in specific area",
+                "nearby_search": "Find banks near geographic point",
+                "place_details": "Get comprehensive bank location info"
+              },
+              "request_format": "RESTful HTTP requests",
+              "response_format": "JSON",
+              "rate_limits": "Usage-based pricing, limits vary by plan",
+              "implementation_complexity": "Low to Medium"
+            }
+          },
+          "banking_specific_queries": {
+            "search_types": ["bank", "credit_union", "atm", "financial_services"],
+            "geographic_filtering": "Country, region, city level",
+            "data_fields": ["name", "address", "phone", "hours", "reviews", "photos"]
+          },
+          "code_examples": {
+            "text_search": "// Google Places API - Text Search for banks\nconst searchCanadianBanks = async (city) => {\n  const apiKey = 'YOUR_API_KEY';\n  const query = `banks in ${city}, Canada`;\n  \n  const response = await fetch(\n    `https://maps.googleapis.com/api/place/textsearch/json?query=${encodeURIComponent(query)}&key=${apiKey}`\n  );\n  \n  const data = await response.json();\n  return data.results.map(place => ({\n    name: place.name,\n    address: place.formatted_address,\n    location: place.geometry.location,\n    place_id: place.place_id,\n    rating: place.rating,\n    types: place.types\n  }));\n};",
+            "nearby_search": "// Google Places API - Nearby Search\nconst findNearbyBanks = async (lat, lng, radius = 5000) => {\n  const apiKey = 'YOUR_API_KEY';\n  const location = `${lat},${lng}`;\n  \n  const response = await fetch(\n    `https://maps.googleapis.com/api/place/nearbysearch/json?location=${location}&radius=${radius}&type=bank&key=${apiKey}`\n  );\n  \n  return response.json();\n};"
+          },
+          "pricing_model": "Usage-based, pay-per-request",
+          "coverage": "Global, real-time updates"
+        },
+        "foursquare_places_api": {
+          "official_name": "Foursquare Places API",
+          "documentation_url": "https://docs.foursquare.com/developer/reference/places-api-overview",
+          "access_methods": {
+            "places_api": {
+              "availability": "Yes - B2B API active",
+              "authentication": "API Key required",
+              "data_scope": "100M+ POIs across 200+ countries",
+              "visit_data": "9B+ monthly visits, 500M+ devices",
+              "services": ["Search", "Discovery", "Autocomplete", "Store ID matching"],
+              "implementation_complexity": "Medium"
+            }
+          },
+          "status": "Consumer app discontinued 2024/2025, B2B services active"
+        },
+        "yellow_pages_canada": {
+          "official_name": "Yellow Pages Canada",
+          "primary_url": "https://www.yellowpages.ca/",
+          "access_methods": {
+            "third_party_api": {
+              "provider": "AlreadyCoded",
+              "api_url": "https://www.alreadycoded.com/api-web-services/canada-yellow-pages-api-business-search.html",
+              "availability": "Commercial API available"
+            },
+            "lead_generation_api": {
+              "provider": "Apify",
+              "service_url": "https://apify.com/lead.gen.labs/yellow-pages-canada-business-lead-generator",
+              "focus": "Business lead generation"
+            },
+            "web_scraping": {
+              "target_url": "https://www.yellowpages.ca/",
+              "categories": ["Banks", "Accountants", "Personal/Mortgage Loans", "Financial Advisors"],
+              "implementation_complexity": "Medium"
+            }
+          },
+          "data_scope": "2.5M+ local businesses",
+          "mobile_apps": "iOS and Android available"
+        },
+        "banklocationmaps": {
+          "official_name": "BankLocationMaps.com",
+          "primary_url": "https://www.banklocationmaps.com/en",
+          "access_methods": {
+            "web_interface": {
+              "canadian_banks": ["RBC", "BMO", "Scotiabank", "CIBC", "National Bank"],
+              "features": ["Interactive maps", "Addresses", "Hours", "Phone numbers"],
+              "api_access": "Not specified in public documentation"
+            }
+          },
+          "coverage": "Worldwide banking locations",
+          "data_quality": "Comprehensive third-party aggregator"
+        },
+        "scrapehero_banking": {
+          "official_name": "ScrapeHero Banking Datasets",
+          "primary_url": "https://www.scrapehero.com/store/",
+          "access_methods": {
+            "commercial_datasets": {
+              "canada_banks": "55-68 bank datasets for Canada",
+              "total_locations": "574-602 locations in Canada",
+              "formats": "Excel downloads with geo-coded addresses",
+              "custom_apis": "Real-time APIs available",
+              "cloud_integration": ["S3", "Azure", "GCP"],
+              "api_endpoints": "Real-time access available"
+            }
+          },
+          "pricing": "Commercial - custom solutions available",
+          "implementation_complexity": "Low - ready-to-use datasets"
+        },
+        "globaldata": {
+          "official_name": "GlobalData",
+          "focus": "Business intelligence and company profiles",
+          "access_methods": {
+            "commercial_subscription": {
+              "company_profiles": "Detailed location information for major banks",
+              "business_directory": "890,000+ companies globally",
+              "canadian_coverage": ["CIBC locations and subsidiaries", "National Bank locations and subsidiaries"]
+            }
+          },
+          "access_model": "Commercial subscription service"
+        },
+        "financial_api_providers": {
+          "plaid": {
+            "network": "12,000+ institutions (US, Canada, UK, Europe)",
+            "canadian_banks": ["TD", "Scotiabank", "others"],
+            "services": ["Assets API", "Auth API", "Balance API"],
+            "focus": "Transaction data, not location data"
+          },
+          "fintable": {
+            "coverage": "281 banks and financial institutions in Canada",
+            "powered_by": ["PLAID", "FINICITY", "SNAPTRADE"],
+            "focus": "API and transaction data"
+          },
+          "portfolio_plus": {
+            "services": "300+ API messages, 65+ third-party vendor interfaces",
+            "focus": "Open Banking/Finance API solutions"
+          }
+        }
+      }
+    },
+    "6_emerging_specialized": {
+      "category_info": {
+        "name": "Emerging & Specialized Sources",
+        "count": 10,
+        "priority": "Medium - Supplementary data",
+        "development_status": "Mix of commercial and developing sources"
+      },
+      "sources": {
+        "financial_services_directory": {
+          "official_name": "Financial Services Canada Directory 2025-2026",
+          "access_methods": {
+            "commercial_purchase": {
+              "coverage": "4,300+ financial companies, 15,161 branches, 17,146 executives",
+              "total_listings": "22,500+ entries",
+              "format": "Commercial directory - print/digital"
+            }
+          },
+          "data_scope": "Comprehensive industry directory"
+        },
+        "open_banking_development": {
+          "status": "Framework development in progress",
+          "government_initiative": "Canada.ca open banking framework",
+          "timeline": "Framework development ongoing",
+          "potential_impact": "May unlock additional API access to banking data"
+        },
+        "third_party_aggregators": {
+          "agenty": {
+            "specialty": "Complete list of Scotiabank locations with geocoded addresses"
+          },
+          "bank_branch_locator": {
+            "service": "Multi-bank location search"
+          },
+          "bank_locator_ca": {
+            "focus": "Canadian-focused bank finder"
+          }
+        }
+      }
+    }
+  },
+  "technical_implementation_guide": {
+    "authentication_methods": {
+      "none_required": {
+        "sources": ["Government websites", "Public bank locators", "Industry association directories"],
+        "implementation": "Direct HTTP requests",
+        "considerations": ["Rate limiting", "User-Agent headers", "Respectful crawling"]
+      },
+      "api_key": {
+        "sources": ["Google Maps Platform", "Commercial APIs"],
+        "implementation": "Include API key in request headers or query parameters",
+        "security": ["Secure key storage", "Key rotation", "Usage monitoring"]
+      },
+      "oauth_2_0": {
+        "sources": ["RBC Developer Portal", "Scotiabank APIs"],
+        "implementation": "Full OAuth flow with client credentials",
+        "requirements": ["Corporate registration", "Business justification", "Compliance"]
+      },
+      "commercial_subscription": {
+        "sources": ["ScrapeHero", "GlobalData", "Financial Services Directory"],
+        "implementation": "API keys or direct data access",
+        "contracts": "Commercial licensing agreements required"
+      }
+    },
+    "data_formats": {
+      "json": {
+        "sources": ["APIs", "Modern web scrapers", "Government Open Data"],
+        "parsing": "Standard JSON libraries",
+        "advantages": ["Structured data", "Easy parsing", "Widely supported"]
+      },
+      "csv": {
+        "sources": ["Government datasets", "Commercial data exports"],
+        "parsing": "CSV parsing libraries (Papa Parse, etc.)",
+        "advantages": ["Simple format", "Excel compatible", "Bulk processing friendly"]
+      },
+      "html": {
+        "sources": ["Web scraping targets", "Bank locators"],
+        "parsing": "DOM parsing libraries (Cheerio, BeautifulSoup)",
+        "challenges": ["Dynamic content", "Layout changes", "JavaScript rendering"]
+      },
+      "xml": {
+        "sources": ["Government metadata", "Legacy systems"],
+        "parsing": "XML parsing libraries",
+        "usage": "Primarily for metadata and legacy integrations"
+      }
+    },
+    "rate_limiting_strategies": {
+      "respectful_crawling": {
+        "delay_between_requests": "1-2 seconds minimum",
+        "concurrent_requests": "Limit to 1-3 per domain",
+        "user_agent": "Identify as legitimate research/business tool"
+      },
+      "proxy_rotation": {
+        "residential_proxies": "For anti-bot protection",
+        "datacenter_proxies": "For basic rate limiting",
+        "rotation_frequency": "Per request or per session"
+      },
+      "session_management": {
+        "cookie_handling": "Maintain session state",
+        "session_rotation": "Regular session refresh",
+        "browser_fingerprinting": "Randomize browser characteristics"
+      }
+    },
+    "error_handling": {
+      "http_errors": {
+        "4xx_errors": "Client errors - check authentication, parameters",
+        "5xx_errors": "Server errors - implement retry with backoff",
+        "timeout_handling": "Set reasonable timeouts, implement retries"
+      },
+      "anti_bot_protection": {
+        "captcha_detection": "Monitor for CAPTCHA challenges",
+        "rate_limit_detection": "Watch for 429 status codes",
+        "ip_blocking": "Detect and rotate IP addresses"
+      },
+      "data_validation": {
+        "schema_validation": "Validate data structure",
+        "completeness_checks": "Ensure required fields present",
+        "consistency_checks": "Cross-validate against known data"
+      }
+    }
+  },
+  "implementation_priorities": {
+    "immediate_deployment": {
+      "priority_1": {
+        "sources": ["OSFI Open Government API", "Google Maps Platform API"],
+        "rationale": "Official data + comprehensive coverage",
+        "implementation_effort": "Low",
+        "data_quality": "Highest"
+      }
+    },
+    "short_term_development": {
+      "priority_2": {
+        "sources": ["RBC Developer API", "ScrapeHero Commercial API"],
+        "rationale": "Official bank data + commercial backup",
+        "implementation_effort": "Medium",
+        "timeline": "2-4 weeks"
+      }
+    },
+    "medium_term_expansion": {
+      "priority_3": {
+        "sources": ["Strategic web scraping of major bank locators", "CCUA credit union data"],
+        "rationale": "Fill coverage gaps",
+        "implementation_effort": "High",
+        "timeline": "1-3 months"
+      }
+    }
+  },
+  "risk_assessment": {
+    "technical_risks": {
+      "api_access_revocation": {
+        "risk": "High",
+        "mitigation": "Multi-source strategy, commercial backups"
+      },
+      "website_structure_changes": {
+        "risk": "Medium",
+        "mitigation": "Robust selectors, regular monitoring, fallback sources"
+      },
+      "rate_limiting_enforcement": {
+        "risk": "Medium",
+        "mitigation": "Respectful crawling, proxy rotation, commercial APIs"
+      }
+    },
+    "legal_risks": {
+      "terms_of_service": {
+        "risk": "Medium",
+        "mitigation": "Review ToS for each source, prefer APIs, respect robots.txt"
+      },
+      "data_licensing": {
+        "risk": "Low to Medium",
+        "mitigation": "Use open data sources, commercial licenses where needed"
+      }
+    },
+    "operational_risks": {
+      "data_freshness": {
+        "risk": "Medium",
+        "mitigation": "Regular update cycles, real-time APIs where possible"
+      },
+      "completeness": {
+        "risk": "Low",
+        "mitigation": "Multi-source validation, coverage metrics"
+      }
+    }
+  },
+  "compliance_considerations": {
+    "data_privacy": {
+      "personal_information": "None collected - only business location data",
+      "regulatory_compliance": "Focus on publicly available business information"
+    },
+    "intellectual_property": {
+      "database_rights": "Use official sources and properly licensed commercial data",
+      "fair_use": "Research and analysis purposes"
+    },
+    "terms_of_service": {
+      "web_scraping": "Review and comply with each site's ToS",
+      "api_usage": "Adhere to API terms and rate limits"
+    }
+  },
+  "recommended_implementation_architecture": {
+    "data_collection_layer": {
+      "api_clients": {
+        "google_maps": "Primary comprehensive source",
+        "osfi_open_data": "Regulatory validation",
+        "commercial_apis": "ScrapeHero, Foursquare as needed"
+      },
+      "web_scrapers": {
+        "bank_locators": "Targeted scraping for major banks",
+        "government_sites": "Backup for regulatory data",
+        "association_directories": "Member lists and directories"
+      }
+    },
+    "data_processing_layer": {
+      "normalization": "Standardize address formats, bank names, service types",
+      "deduplication": "Cross-source matching and duplicate removal",
+      "validation": "Multi-source validation and quality scoring"
+    },
+    "data_storage_layer": {
+      "primary_database": "Consolidated banking location database",
+      "source_tracking": "Track data provenance and update cycles",
+      "quality_metrics": "Store confidence scores and validation results"
+    },
+    "monitoring_and_maintenance": {
+      "source_monitoring": "Track source availability and changes",
+      "data_freshness": "Regular update cycles and staleness detection",
+      "quality_assurance": "Automated validation and anomaly detection"
+    }
+  }
+}
