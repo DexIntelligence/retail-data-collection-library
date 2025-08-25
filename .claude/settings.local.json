@@ -14,7 +14,22 @@
       "WebFetch(domain:www.scrapehero.com)",
       "WebFetch(domain:developers.google.com)",
       "WebFetch(domain:ccua.com)",
-      "Bash(time:*)"
+      "Bash(time:*)",
+      "WebFetch(domain:www.central1.com)",
+      "WebFetch(domain:atlanticcentral.ca)",
+      "WebFetch(domain:albertacentral.com)",
+      "WebFetch(domain:desjardins.com)",
+      "WebFetch(domain:cucm.org)",
+      "WebFetch(domain:www.vancity.com)",
+      "WebFetch(domain:servus.ca)",
+      "WebFetch(domain:meridiancu.ca)",
+      "WebFetch(domain:www.meridiancu.ca)",
+      "WebFetch(domain:www.desjardins.com)",
+      "WebFetch(domain:developers.desjardins.com)",
+      "Bash(python:*)",
+      "Bash(powershell:*)",
+      "WebFetch(domain:annualreport.vancity.com)",
+      "WebFetch(domain:www.affinitycu.ca)"
     ],
     "deny": [],
     "ask": []
